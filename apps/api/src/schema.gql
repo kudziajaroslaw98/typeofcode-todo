@@ -61,7 +61,7 @@ enum TaskState {
 
 type Mutation {
   createTask(input: TaskInput!): TaskDto!
-  updateTask(id: String!, input: TaskInput!): TaskDto!
+  updateTask(id: String!, input: TaskUpdateInput!): TaskDto!
   removeTask(id: String!): DeleteResponseDto!
   removeTasks(ids: [String!]!): DeleteResponseDto!
   removeAllTasks: DeleteResponseDto!
@@ -75,6 +75,15 @@ input TaskInput {
   state: String = "TODO"
   startedAt: DateTime
   timeSpent: Float
-  createdAt: DateTime! = "2025-03-09T13:40:10.226Z"
-  updatedAt: DateTime! = "2025-03-09T13:40:10.226Z"
+  createdAt: DateTime! = "2025-03-10T16:43:32.062Z"
+  updatedAt: DateTime! = "2025-03-10T16:43:32.062Z"
+}
+
+input TaskUpdateInput {
+  title: String
+  description: String
+  done: Boolean
+  state: String
+  startedAt: DateTime
+  timeSpent: Float
 }

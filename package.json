@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "jsdom": "^26.0.0",
     "turbo": "^2.4.4"
   },
   "packageManager": "npm@10.9.1",
@@ -10,5 +11,8 @@
   },
   "workspaces": [
     "apps/*"
-  ]
+  ],
+  "dependencies": {
+    "jest": "^29.7.0"
+  }
 }
