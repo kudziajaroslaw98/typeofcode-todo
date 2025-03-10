@@ -24,7 +24,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const { selected, taskFilters, newTask, updateTask, updateFilters, removeSelected, removeAll } = useAppState();
+  const { taskFilters, newTask, updateTask, updateFilters, removeAll } = useAppState();
 
   const handleNewTask = (data: Pick<Task, "title" | "state" | "description"> & Partial<Omit<Task, "title" | "state" | "description">>) => {
     if (!data) return;
@@ -40,9 +40,6 @@ function Index() {
     updateFilters(filters ?? {});
   };
 
-  const handleRemoveSelected = () => {
-    removeSelected();
-  };
   const handleRemoveAll = () => {
     removeAll();
   };
