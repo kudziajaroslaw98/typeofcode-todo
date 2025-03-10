@@ -28,7 +28,8 @@
       "@/components/*": ["src/components/*"],
       "@/lib/utils/*": ["src/lib/utils/*"],
       "@/lib/*": ["src/lib/*"],
-      "@/hooks/*": ["src/hooks/*"]
+      "@/hooks/*": ["src/hooks/*"],
+      "@/helpers/*": ["src/helpers/*"]
     }
   },
   "include": ["src", "./jest.config.js"]

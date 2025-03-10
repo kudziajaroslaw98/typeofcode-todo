@@ -75,8 +75,8 @@ input TaskInput {
   state: String = "TODO"
   startedAt: DateTime
   timeSpent: Float
-  createdAt: DateTime! = "2025-03-10T22:21:03.596Z"
-  updatedAt: DateTime! = "2025-03-10T22:21:03.596Z"
+  createdAt: DateTime! = "2025-03-10T22:39:50.208Z"
+  updatedAt: DateTime! = "2025-03-10T22:39:50.209Z"
 }
 
 input TaskUpdateInput {

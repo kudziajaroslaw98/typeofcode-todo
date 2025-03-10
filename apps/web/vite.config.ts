@@ -27,6 +27,7 @@ export default defineConfig({
       "@/lib/utils": path.resolve(__dirname, "./src/lib/utils"),
       "@/lib": path.resolve(__dirname, "./src/lib"),
       "@/hooks": path.resolve(__dirname, "./src/hooks"),
+      "@/helpers": path.resolve(__dirname, "./src/helpers"),
     },
   },
 });

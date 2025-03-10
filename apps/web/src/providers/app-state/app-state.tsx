@@ -1,4 +1,6 @@
+import { handleClientErrors } from "@/helpers/handle-client-errors";
 import { useMutation, useQuery } from "@apollo/client";
+import type { GraphQLFormattedError } from "graphql/error/GraphQLError";
 import { useEffect, useState, type Dispatch, type PropsWithChildren, type SetStateAction } from "react";
 import { CREATE_TASK, GET_TASKS, REMOVE_ALL_TASKS, REMOVE_BATCH_TASKS, UPDATE_TASK } from "../../queries/graphql-queries";
 import type { Task } from "../../types/task";
@@ -60,8 +62,13 @@ export default function AppStateProvider({ ...props }: PropsWithChildren<{ testI
       taskCopy.timeSpent = Math.floor((new Date().getTime() - new Date(task.startedAt).getTime() - miliSeconds) / 1000);
       taskCopy.startedAt = null;
     }
-    setTasks((prev) => prev.map((prevTask) => (prevTask.id === task.id ? { ...prevTask, ...taskCopy } : prevTask)));
-    await updateTaskQuery({ variables: { id: task.id, input: taskCopy } });
+
+    try {
+      await updateTaskQuery({ variables: { id: task.id, input: taskCopy } });
+      setTasks((prev) => prev.map((prevTask) => (prevTask.id === task.id ? { ...prevTask, ...taskCopy } : prevTask)));
+    } catch (error) {
+      handleClientErrors([error as GraphQLFormattedError]);
+    }
   };
 
   const toggleTaskSession = async (turnedOn: boolean, task: Task) => {
@@ -88,8 +95,12 @@ export default function AppStateProvider({ ...props }: PropsWithChildren<{ testI
       taskCopy.state = "TODO";
     }
 
-    setTasks((prev) => prev.map((prevTask) => (prevTask.id === task.id ? { ...prevTask, ...taskCopy } : prevTask)));
-    await updateTaskQuery({ variables: { id: task.id, input: taskCopy } });
+    try {
+      await updateTaskQuery({ variables: { id: task.id, input: taskCopy } });
+      setTasks((prev) => prev.map((prevTask) => (prevTask.id === task.id ? { ...prevTask, ...taskCopy } : prevTask)));
+    } catch (error) {
+      handleClientErrors([error as GraphQLFormattedError]);
+    }
   };
 
   const newTask = async (data: Pick<Task, "title" | "state" | "description">) => {
@@ -106,13 +117,16 @@ export default function AppStateProvider({ ...props }: PropsWithChildren<{ testI
       updatedAt: new Date(),
     };
 
-    const {
-      data: { createTask },
-    } = await createTaskQuery({ variables: { input: taskCopy } });
-    console.log("🚀 ~ :110 ~ newTask ~ task:", createTask);
-    setTasks((prev) => {
-      return [...prev, createTask];
-    });
+    try {
+      const {
+        data: { createTask },
+      } = await createTaskQuery({ variables: { input: taskCopy } });
+      setTasks((prev) => {
+        return [...prev, createTask];
+      });
+    } catch (error) {
+      handleClientErrors([error as GraphQLFormattedError]);
+    }
   };
 
   const updateTask = async (data: Pick<Task, "title" | "state" | "description"> & Partial<Omit<Task, "title" | "state" | "description">>) => {
@@ -127,8 +141,12 @@ export default function AppStateProvider({ ...props }: PropsWithChildren<{ testI
       startedAt: data.startedAt,
     };
 
-    setTasks((prev) => prev.map((prevTask) => (prevTask.id === data.id ? { ...prevTask, ...taskCopy } : prevTask)));
-    await updateTaskQuery({ variables: { id: data.id, input: taskCopy } });
+    try {
+      setTasks((prev) => prev.map((prevTask) => (prevTask.id === data.id ? { ...prevTask, ...taskCopy } : prevTask)));
+      await updateTaskQuery({ variables: { id: data.id, input: taskCopy } });
+    } catch (error) {
+      handleClientErrors([error as GraphQLFormattedError]);
+    }
   };
 
   const updateFilters = (filters: TaskFilters) => {
@@ -136,15 +154,23 @@ export default function AppStateProvider({ ...props }: PropsWithChildren<{ testI
   };
 
   const removeSelected = async () => {
-    await deleteSelectedTaskQuery({ variables: { ids: selected } });
-    setTasks((prev) => prev.filter((task) => !selected.includes(task.id)));
-    setSelected([]);
+    try {
+      await deleteSelectedTaskQuery({ variables: { ids: selected } });
+      setTasks((prev) => prev.filter((task) => !selected.includes(task.id)));
+      setSelected([]);
+    } catch (error) {
+      handleClientErrors([error as GraphQLFormattedError]);
+    }
   };
 
   const removeAll = async () => {
-    await deleteAllTaskQuery({ variables: { ids: selected } });
-    setTasks([]);
-    setSelected([]);
+    try {
+      await deleteAllTaskQuery({ variables: { ids: selected } });
+      setTasks([]);
+      setSelected([]);
+    } catch (error) {
+      handleClientErrors([error as GraphQLFormattedError]);
+    }
   };
 
   /////////////////
@@ -158,6 +184,7 @@ export default function AppStateProvider({ ...props }: PropsWithChildren<{ testI
     data: initTasks,
     refetch: refetchTasks,
     loading: tasksLoading,
+    error: tasksError,
   } = useQuery(GET_TASKS, { variables: { filter: taskFilters }, nextFetchPolicy: "cache-and-network" });
 
   useEffect(() => {
@@ -167,10 +194,22 @@ export default function AppStateProvider({ ...props }: PropsWithChildren<{ testI
 
   useEffect(() => {
     if (!taskFilters) return;
-    refetchTasks({ filter: taskFilters ?? {} }).then(({ data }) => {
-      setTasks(data.tasks);
+    refetchTasks({ filter: taskFilters ?? {} }).then(({ errors, data }) => {
+      if (errors) {
+        handleClientErrors(errors);
+      }
+
+      if (data && data.tasks) {
+        setTasks(data.tasks);
+      }
     });
   }, [taskFilters]);
+
+  useEffect(() => {
+    if (!tasksError) return;
+    console.error(tasksError.message);
+    window.alert("Error: " + tasksError.message);
+  }, [tasksError]);
 
   /////////////////
   // #endregion INIT
