@@ -14,6 +14,12 @@ import { AppService } from './app.service';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      formatError: (error) => {
+        return {
+          message: error.message,
+          code: error.extensions?.code,
+        };
+      },
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '../../../', 'web', 'dist'),
