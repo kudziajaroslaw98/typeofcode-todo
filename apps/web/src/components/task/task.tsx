@@ -7,7 +7,7 @@ import { Toggle } from "@/components/ui/toggle";
 import { cn } from "@/lib/utils";
 import { useAppState } from "@/providers/app-state/use-app-state";
 import type { Task } from "@/types/task";
-import { Check, MoreHorizontal, Pause, Pencil, Play } from "lucide-react";
+import { Check, Pause, Pencil, Play } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export const TaskComponent = ({ task, onSelect, selected }: { task: Task; onSelect: (task: Task) => void; selected: (task: Task) => boolean }) => {
@@ -119,10 +119,6 @@ export const TaskComponent = ({ task, onSelect, selected }: { task: Task; onSele
                   <TaskForm initialData={task} onSubmit={handleEditTask} />
                 </PopoverContent>
               </Popover>
-
-              <Button variant="ghost" data-testid="task-more-button" className="size-6! p-2!" disabled={task.done}>
-                <MoreHorizontal className={cn(["size-4!", task.done ? "text-zinc-800" : "text-zinc-500"])} />
-              </Button>
             </div>
 
             <div data-testid="task-body-lg" className="md:flex flex-col gap-1 justify-center hidden">
