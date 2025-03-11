@@ -51,6 +51,7 @@ This Task Manager application allows users to create, read, update, and delete t
 - React Hook Form for form handling
 - tailwindCSS for styling
 - Jest and React Testing Library
+- Tanstack React Router
 
 ## Features
 
