@@ -74,7 +74,12 @@ This Task Manager application allows users to create, read, update, and delete t
 1. Clone the repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/kudziajaroslaw98/typeofcode-todo.git
+
+or through ssh
+
+git clone git@github.com:kudziajaroslaw98/typeofcode-todo.git
+
 cd task-manager
 ```
 
